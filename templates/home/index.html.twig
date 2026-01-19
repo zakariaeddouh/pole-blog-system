@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Mon Blog{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Derniers articles</h1>
+
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if post.picture %}
+                        <img src="{{ post.picture }}" class="card-img-top" alt="{{ post.title }}">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">
+                            {{ post.content|striptags|slice(0, 120) ~ '...' }}
+                        </p>
+                        <a href="{{ path('app_post_show', {id: post.id}) }}"
+                           class="btn btn-primary mt-auto">
+                            Lire la suite
+                        </a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        Publié le {{ post.publishedAt|date('d/m/Y H:i') }}
+                        {% if post.category %}
+                            • {{ post.category.name }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucun article pour le moment.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
