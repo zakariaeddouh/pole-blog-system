@@ -1,41 +1,114 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Post index{% endblock %}
+{% block title %}Accueil - Mon Blog{% endblock %}
 
 {% block body %}
-    <h1>Post index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Content</th>
-                <th>PublishedAt</th>
-                <th>Picture</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for post in posts %}
-            <tr>
-                <td>{{ post.id }}</td>
-                <td>{{ post.title }}</td>
-                <td>{{ post.content }}</td>
-                <td>{{ post.publishedAt ? post.publishedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ post.picture }}</td>
-                <td>
-                    <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
-                    <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {# Hero / Bandeau d'accueil #}
+    <header class="py-5 bg-light border-bottom mb-4">
+        <div class="container px-5">
+            <div class="text-center">
+                <h1 class="fw-bolder">Bienvenue sur Mon Blog</h1>
+                <p class="lead fw-normal text-muted mb-0">
+                    Découvrez les derniers articles publiés.
+                </p>
+            </div>
+        </div>
+    </header>
 
-    <a href="{{ path('app_post_new') }}">Create new</a>
+    <section class="py-4">
+        <div class="container px-5">
+
+            {% if posts is empty %}
+                <div class="alert alert-info">
+                    Aucun article pour le moment. Revenez bientôt !
+                </div>
+            {% else %}
+                <div class="row gx-5 gy-4">
+                    {% for post in posts %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card h-100 shadow-sm border-0">
+
+                                {# Image de l'article #}
+                                {% if post.picture %}
+                                    <a href="{{ path('app_post_show', {id: post.id}) }}">
+                                        <img
+                                            src="{{ post.picture }}"
+                                            class="card-img-top"
+                                            alt="{{ post.title }}"
+                                            style="object-fit: cover; height: 220px;"
+                                        >
+                                    </a>
+                                {% endif %}
+
+                                <div class="card-body d-flex flex-column">
+                                    {# Date + Catégorie #}
+                                    <div class="small text-muted mb-2">
+                                        Publié le {{ post.publishedAt|date('d/m/Y H:i') }}
+                                        {% if post.category %}
+                                            •
+                                            <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill">
+                                                {{ post.category.name }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+
+                                    {# Titre #}
+                                    <h5 class="card-title fw-bold mb-2">
+                                        <a href="{{ path('app_post_show', {id: post.id}) }}"
+                                           class="text-decoration-none text-dark">
+                                            {{ post.title }}
+                                        </a>
+                                    </h5>
+
+                                    {# Extrait du contenu #}
+                                    <p class="card-text text-muted mb-3">
+                                        {{ post.content|striptags|slice(0, 160) ~ '...' }}
+                                    </p>
+
+                                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                                        {# Bouton "Lire la suite" #}
+                                        <a href="{{ path('app_post_show', {id: post.id}) }}"
+                                           class="btn btn-sm btn-outline-primary">
+                                            Lire la suite
+                                        </a>
+
+                                        {# Actions admin : modifier / supprimer #}
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <div class="d-flex gap-2">
+
+                                                {# Bouton éditer #}
+                                                <a href="{{ path('app_post_edit', {id: post.id}) }}"
+                                                   class="btn btn-sm d-flex justify-content-center align-items-center"
+                                                   style="width:40px;height:40px;background:#0d6efd;color:white;border-radius:10px;">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+
+                                                {# Bouton supprimer (avec CSRF) #}
+                                                <form method="post"
+                                                      action="{{ path('app_post_delete', {id: post.id}) }}"
+                                                      onsubmit="return confirm('Supprimer cet article ?');">
+                                                    <input type="hidden" name="_token"
+                                                           value="{{ csrf_token('delete' ~ post.id) }}">
+                                                    <button
+                                                        class="btn btn-sm d-flex justify-content-center align-items-center"
+                                                        style="width:40px;height:40px;background:#6c757d;color:white;border-radius:10px;border:none;">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        </div>
+    </section>
+
 {% endblock %}

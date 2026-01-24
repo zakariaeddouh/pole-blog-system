@@ -1,38 +1,136 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Post{% endblock %}
+{% block title %}{{ post.title }} - Mon Blog{% endblock %}
 
 {% block body %}
-    <h1>Post</h1>
+<section class="py-5">
+    <div class="container px-5 my-5">
+        <div class="row gx-5">
+            {# Colonne de gauche : infos auteur / meta #}
+            <div class="col-lg-3">
+                <div class="d-flex align-items-center mt-lg-5 mb-4">
+                    {# Avatar (placeholder) #}
+                    <img class="img-fluid rounded-circle"
+                         src="https://dummyimage.com/60x60/ced4da/6c757d.jpg"
+                         alt="Auteur" />
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ post.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ post.title }}</td>
-            </tr>
-            <tr>
-                <th>Content</th>
-                <td>{{ post.content }}</td>
-            </tr>
-            <tr>
-                <th>PublishedAt</th>
-                <td>{{ post.publishedAt ? post.publishedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Picture</th>
-                <td>{{ post.picture }}</td>
-            </tr>
-        </tbody>
-    </table>
+                    <div class="ms-3">
+                        <div class="fw-bold">
+                            {# Si un jour tu ajoutes un auteur, tu pourras remplacer par post.author... #}
+                            Auteur de l'article
+                        </div>
+                        <div class="text-muted small">
+                            Publié le {{ post.publishedAt|date('d/m/Y H:i') }}<br>
+                            {% if post.category %}
+                                Catégorie : {{ post.category.name }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <a href="{{ path('app_post_index') }}">back to list</a>
+            {# Colonne de droite : contenu de l'article #}
+            <div class="col-lg-9">
+                <article>
+                    <!-- Post header-->
+                    <header class="mb-4 d-flex justify-content-between align-items-start gap-3">
+                        <div>
+                            <!-- Post title-->
+                            <h1 class="fw-bolder mb-2">{{ post.title }}</h1>
 
-    <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
+                            <!-- Post meta content-->
+                            <div class="text-muted fst-italic mb-2">
+                                Publié le {{ post.publishedAt|date('d/m/Y H:i') }}
+                                {% if post.category %}
+                                    •
+                                    <span class="badge bg-secondary text-decoration-none">
+                                        {{ post.category.name }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
 
-    {{ include('post/_delete_form.html.twig') }}
+                        {# Actions admin (éditer / supprimer) #}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="d-flex gap-2">
+                                <a href="{{ path('app_post_edit', {id: post.id}) }}"
+                                   class="btn btn-sm d-flex justify-content-center align-items-center"
+                                   style="width:40px;height:40px;background:#0d6efd;color:white;border-radius:10px;">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <form method="post"
+                                      action="{{ path('app_post_delete', {id: post.id}) }}"
+                                      onsubmit="return confirm('Supprimer cet article ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                                    <button class="btn btn-sm d-flex justify-content-center align-items-center"
+                                            style="width:40px;height:40px;background:#6c757d;color:white;border-radius:10px;border:none;">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </header>
+
+                    <!-- Preview image figure-->
+                    {% if post.picture %}
+                        <figure class="mb-4">
+                            <img class="img-fluid rounded"
+                                 src="{{ post.picture }}"
+                                 alt="{{ post.title }}"
+                                 style="max-height:450px;object-fit:cover;width:100%;">
+                        </figure>
+                    {% endif %}
+
+                    <!-- Post content-->
+                    <section class="mb-5">
+                        {# Si post.content contient du HTML, on peut rendre brut #}
+                        <div class="fs-5 mb-4">
+                            {{ post.content|raw }}
+                        </div>
+                    </section>
+                </article>
+
+                <!-- Bouton retour -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{{ path('app_post_index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Retour aux articles
+                    </a>
+                </div>
+
+                {# Section commentaires (structure prête si tu veux ajouter plus tard) #}
+                {#
+                <section class="mt-5">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <!-- Comment form-->
+                            <form class="mb-4">
+                                <textarea class="form-control" rows="3"
+                                          placeholder="Partage ton avis sur cet article..."></textarea>
+                                <button class="btn btn-primary mt-3">Publier le commentaire</button>
+                            </form>
+
+                            <!-- Exemple de commentaire -->
+                            <div class="d-flex mb-4">
+                                <div class="flex-shrink-0">
+                                    <img class="rounded-circle"
+                                         src="https://dummyimage.com/50x50/ced4da/6c757d.jpg"
+                                         alt="..." />
+                                </div>
+                                <div class="ms-3">
+                                    <div class="fw-bold">Nom du commentateur</div>
+                                    <p class="mb-0">
+                                        Super article ! J'ai appris plein de choses.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                #}
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

@@ -62,6 +62,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'author')]
     private Collection $posts;
 
+    #[ORM\Column]
+    private ?bool $isActive = null;
+
     /**
      * construct
      */
@@ -70,6 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createAt = new \DateTimeImmutable();
         $this->comments = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->isActive = true;
     }
 
     public function getId(): ?int
@@ -269,6 +273,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $post->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }

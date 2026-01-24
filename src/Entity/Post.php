@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
 {
@@ -38,7 +40,7 @@ class Post
     private ?User $author = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
-    private ?Category $categoty = null;
+    private ?Category $category = null;
 
     /**
      * construct
@@ -144,14 +146,14 @@ class Post
         return $this;
     }
 
-    public function getCategoty(): ?Category
+    public function getCategory(): ?Category
     {
-        return $this->categoty;
+        return $this->category;
     }
 
-    public function setCategoty(?Category $categoty): static
+    public function setCategory(?Category $category): static
     {
-        $this->categoty = $categoty;
+        $this->category = $category;
 
         return $this;
     }

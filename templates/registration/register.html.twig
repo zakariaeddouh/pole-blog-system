@@ -3,30 +3,69 @@
 {% block title %}Inscription{% endblock %}
 
 {% block body %}
-    <h1 class="mb-4">Créer un compte</h1>
+<section class="py-5">
+    <div class="container px-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-7 col-xl-6">
+                <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                    <div class="text-center mb-4">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                            <i class="bi bi-person-plus"></i>
+                        </div>
+                        <h1 class="fw-bolder h3 mb-1">Créer un compte</h1>
+                        <p class="lead fw-normal text-muted mb-0">
+                            Rejoins le blog pour publier et commenter des articles.
+                        </p>
+                    </div>
 
-    {{ form_errors(registrationForm) }}
+                    {{ form_start(registrationForm) }}
 
-    {{ form_start(registrationForm) }}
-        <div class="row">
-            <div class="col-md-6">
-                {{ form_row(registrationForm.firstName) }}
-            </div>
-            <div class="col-md-6">
-                {{ form_row(registrationForm.lastName) }}
+                        {{ form_errors(registrationForm) }}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(registrationForm.firstName, {
+                                    label: 'Prénom'
+                                }) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(registrationForm.lastName, {
+                                    label: 'Nom'
+                                }) }}
+                            </div>
+                        </div>
+
+                        {{ form_row(registrationForm.email, {
+                            label: 'Adresse email'
+                        }) }}
+
+                        {{ form_row(registrationForm.profilePicture, {
+                            label: 'Photo de profil'
+                        }) }}
+
+                        {{ form_row(registrationForm.plainPassword, {
+                            label: 'Mot de passe'
+                        }) }}
+
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.agreeTerms) }}
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between align-items-center mt-3">
+                            <a href="{{ path('app_login') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>
+                                J'ai déjà un compte
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-person-check me-1"></i>
+                                M'inscrire
+                            </button>
+                        </div>
+
+                    {{ form_end(registrationForm) }}
+                </div>
             </div>
         </div>
-
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.profilePicture) }}
-
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Mot de passe'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn btn-primary mt-3">
-            M'inscrire
-        </button>
-    {{ form_end(registrationForm) }}
+    </div>
+</section>
 {% endblock %}

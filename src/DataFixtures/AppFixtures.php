@@ -61,9 +61,9 @@ class AppFixtures extends Fixture
                 $post = new Post();
                 $post->setTitle($faker->sentence(6));
                 $post->setContent($faker->paragraphs(4, true));
-                $post->setPicture($faker->imageUrl(800, 400, 'tech'));
+                $post->setPicture("https://www.netoffensive.blog/wp-content/uploads/2020/08/rediger-bon-article-blog.jpg");
                 $post->setPublishedAt(\DateTimeImmutable::createFromMutable($faker->dateTime()));
-                $post->setCategoty($category);
+                $post->setCategory($category);
                 $post->setAuthor($faker->randomElement($users));
 
                 $manager->persist($post);

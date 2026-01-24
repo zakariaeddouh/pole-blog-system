@@ -1,47 +1,54 @@
+{# templates/base.html.twig #}
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Mon Blog Symfony{% endblock %}</title>
 
         {# Bootstrap CSS #}
-        <link
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-..."
-          crossorigin="anonymous"
-        >
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        {% block stylesheets %}{% endblock %}
+        {# Bootstrap Icons #}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+        {# Ici tu peux ajouter tes propres CSS si besoin #}
+        {% block stylesheets %}
+            {# Exemple :
+            <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+            #}
+        {% endblock %}
     </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-            <div class="container">
-                <a class="navbar-brand" href="{{ path('app_home') }}">Mon Blog</a>
-
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <body class="d-flex flex-column min-vh-100">
+        {# Navigation #}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-5">
+                <a class="navbar-brand" href="{{ path('app_post_index') }}">Mon Blog</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('app_post_index') }}">Articles</a>
                         </li>
 
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Admin</a>
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                                    Admin
+                                </a>
                                 <ul class="dropdown-menu">
+                                    {# À décommenter quand les routes existent #}
                                     {# <li><a class="dropdown-item" href="{{ path('app_post_admin_index') }}">Gérer articles</a></li>
-                                    <li><a class="dropdown-item" href="{{ path('app_category_index') }}">Catégories</a></li>
-                                    <li><a class="dropdown-item" href="{{ path('app_user_admin_index') }}">Utilisateurs</a></li> #}
+                                    <li><a class="dropdown-item" href="{{ path('app_category_index') }}">Catégories</a></li> #}
+                                    <li><a class="dropdown-item" href="{{ path('app_user_admin_index') }}">Utilisateurs</a></li>
                                 </ul>
                             </li>
                         {% endif %}
-                    </ul>
 
-                    <ul class="navbar-nav">
                         {% if app.user %}
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Bonjour {{ app.user.firstName }}</a>
@@ -62,25 +69,39 @@
             </div>
         </nav>
 
-        <div class="container">
-            {% for label, messages in app.flashes %}
-                <div class="alert alert-{{ label }} mt-2">
-                    {% for message in messages %}
-                        {{ message }}
-                    {% endfor %}
-                </div>
-            {% endfor %}
+        {# Contenu principal #}
+        <main class="flex-shrink-0">
+            <div class="container px-5 py-4">
+                {% block body %}{% endblock %}
+            </div>
+        </main>
 
-            {% block body %}{% endblock %}
-        </div>
+        {# Footer #}
+        <footer class="bg-dark py-4 mt-auto">
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto">
+                        <div class="small m-0 text-white">
+                            Copyright &copy; Mon Blog Symfony {{ "now"|date("Y") }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <a class="link-light small" href="#!">Privacy</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Terms</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
         {# Bootstrap JS #}
-        <script
-          src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-          integrity="sha384-..."
-          crossorigin="anonymous"
-        ></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        {% block javascripts %}{% endblock %}
+        {# JS Symfony (AssetMapper / importmap) #}
+        {% block javascripts %}
+            {{ importmap('app') }}
+        {% endblock %}
     </body>
 </html>
